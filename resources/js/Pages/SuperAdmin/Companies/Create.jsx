@@ -93,7 +93,7 @@ export default function CompanyCreate({ plans }) {
                                 <select value={data.plan_id} onChange={e => setData('plan_id', e.target.value)} className={SELECT}>
                                     {plans.map(p => (
                                         <option key={p.id} value={p.id}>
-                                            {p.name} — ${p.price_monthly}/mo · ${p.price_yearly}/yr
+                                            {p.name} — RWF {Number(p.price_monthly).toLocaleString()}/mo · RWF {Number(p.price_yearly).toLocaleString()}/yr
                                         </option>
                                     ))}
                                 </select>

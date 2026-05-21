@@ -16,11 +16,6 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        // Super admins belong to no company — redirect them to their own panel
-        if (auth()->user()->is_super_admin) {
-            return redirect('/superadmin');
-        }
-
         $now = now();
 
         // ── KPI Cards ────────────────────────────────────────────────────────

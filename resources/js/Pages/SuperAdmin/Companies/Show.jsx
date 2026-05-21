@@ -118,7 +118,7 @@ export default function CompanyShow({ company, usage, subscription, subscription
                                         <label className="block text-xs font-medium text-gray-700 mb-1">Plan</label>
                                         <select value={subForm.data.plan_id} onChange={e => subForm.setData('plan_id', e.target.value)}
                                             className="w-full rounded-xl border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-violet-400">
-                                            {plans.map(p => <option key={p.id} value={p.id}>{p.name} (${p.price_monthly}/mo)</option>)}
+                                            {plans.map(p => <option key={p.id} value={p.id}>{p.name} (RWF {Number(p.price_monthly).toLocaleString()}/mo)</option>)}
                                         </select>
                                     </div>
                                     <div>

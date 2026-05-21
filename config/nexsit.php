@@ -10,8 +10,8 @@ return [
         'property' => 'NST-',
     ],
 
-    'default_currency' => 'AED',
-    'default_country'  => 'AE',
+    'default_currency' => env('APP_CURRENCY', 'RWF'),
+    'default_country'  => env('APP_COUNTRY', 'RW'),
 
     'features' => [
         'portal_feeds'  => true,

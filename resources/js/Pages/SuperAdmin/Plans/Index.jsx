@@ -75,12 +75,12 @@ function PlanForm({ plan, onClose }) {
                             <input type="text" value={data.description} onChange={e => setData('description', e.target.value)} className={INPUT} placeholder="Best for growing agencies" />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">Monthly Price ($) *</label>
-                            <input type="number" min="0" step="0.01" value={data.price_monthly} onChange={e => setData('price_monthly', e.target.value)} className={INPUT} placeholder="49.00" />
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Monthly Price (RWF) *</label>
+                            <input type="number" min="0" step="1" value={data.price_monthly} onChange={e => setData('price_monthly', e.target.value)} className={INPUT} placeholder="29000" />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">Yearly Price ($) *</label>
-                            <input type="number" min="0" step="0.01" value={data.price_yearly} onChange={e => setData('price_yearly', e.target.value)} className={INPUT} placeholder="470.00" />
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Yearly Price (RWF) *</label>
+                            <input type="number" min="0" step="1" value={data.price_yearly} onChange={e => setData('price_yearly', e.target.value)} className={INPUT} placeholder="290000" />
                         </div>
                     </div>
 
@@ -198,9 +198,9 @@ function PlanCard({ plan, onEdit }) {
             )}
 
             <div className="mb-3">
-                <span className="text-2xl font-bold text-gray-900">${Number(plan.price_monthly).toLocaleString()}</span>
+                <span className="text-2xl font-bold text-gray-900">RWF {Number(plan.price_monthly).toLocaleString()}</span>
                 <span className="text-xs text-gray-400">/mo</span>
-                <span className="text-xs text-gray-400 ml-2">${Number(plan.price_yearly).toLocaleString()}/yr</span>
+                <span className="text-xs text-gray-400 ml-2">RWF {Number(plan.price_yearly).toLocaleString()}/yr</span>
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-4">
