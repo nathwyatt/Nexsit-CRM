@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { formatMoney, rentSuffix, useCurrency } from '@/Utils/format';
+import AppIcon from '@/Components/AppIcon';
 
 const STATUS_COLORS = {
     available:   'bg-emerald-500',
@@ -133,9 +134,13 @@ function SearchBar({ filters, propertyTypes, companySlug }) {
         sort:      filters.sort ?? 'newest',
     });
 
+    const [showMore, setShowMore] = useState(!!(filters.bedrooms || filters.price_min || filters.price_max));
+
+    // Purpose, type and sort come from the quick-filter bar (current URL), the rest from this form
     function apply(e) {
         e.preventDefault();
-        const params = Object.fromEntries(Object.entries(local).filter(([, v]) => v !== ''));
+        const merged = { ...filters, q: local.q, bedrooms: local.bedrooms, price_min: local.price_min, price_max: local.price_max, page: undefined };
+        const params = Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== '' && v != null));
         if (companySlug) params.company = companySlug;
         router.get('/listings', params, { preserveState: true });
     }
@@ -145,66 +150,59 @@ function SearchBar({ filters, propertyTypes, companySlug }) {
         router.get('/listings', companySlug ? { company: companySlug } : {});
     }
 
-    const sel = 'bg-white rounded-xl border border-white/60 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-gray-700';
+    const field = 'bg-white rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-700';
+    const activeExtras = [filters.bedrooms, filters.price_min, filters.price_max].filter(Boolean).length;
 
     return (
-        <form onSubmit={apply} className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/60 p-5 space-y-4">
-            {/* Main search */}
-            <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                    <IconSearch className="w-4 h-4" />
-                </span>
-                <input
-                    value={local.q}
-                    onChange={e => setLocal(s => ({ ...s, q: e.target.value }))}
-                    placeholder="Search by title, neighbourhood, reference…"
-                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-gray-800 placeholder-gray-400"
-                />
+        <form onSubmit={apply} className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/60 p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row gap-2.5">
+                <div className="relative flex-1">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <IconSearch className="w-4 h-4" />
+                    </span>
+                    <input
+                        value={local.q}
+                        onChange={e => setLocal(s => ({ ...s, q: e.target.value }))}
+                        placeholder="Search by neighbourhood, title or reference…"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 text-[15px] focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800 placeholder-gray-400"
+                    />
+                </div>
+                <div className="flex gap-2.5">
+                    <button type="button" onClick={() => setShowMore(v => !v)}
+                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 text-sm rounded-xl font-semibold border transition-colors ${showMore || activeExtras ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : 'border-gray-200 text-gray-700 bg-white hover:border-gray-300'}`}>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>
+                        Filters{activeExtras ? ` (${activeExtras})` : ''}
+                    </button>
+                    <button type="submit"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 text-sm rounded-xl font-semibold text-white shadow-sm transition-all hover:opacity-90"
+                        style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}>
+                        <IconSearch className="w-4 h-4" />
+                        Search
+                    </button>
+                </div>
             </div>
 
-            {/* Filters row */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-                <select value={local.purpose} onChange={e => setLocal(s => ({ ...s, purpose: e.target.value }))} className={sel}>
-                    <option value="">Any purpose</option>
-                    <option value="sale">For Sale</option>
-                    <option value="rent">For Rent</option>
-                </select>
-                <select value={local.type} onChange={e => setLocal(s => ({ ...s, type: e.target.value }))} className={sel}>
-                    <option value="">Any type</option>
-                    {propertyTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                </select>
-                <select value={local.bedrooms} onChange={e => setLocal(s => ({ ...s, bedrooms: e.target.value }))} className={sel}>
-                    <option value="">Any bedrooms</option>
-                    {[0, 1, 2, 3, 4, 5, 6].map(n => (
-                        <option key={n} value={n}>{n === 0 ? 'Studio' : `${n} BR`}</option>
-                    ))}
-                    <option value="7">7+ BR</option>
-                </select>
-                <input type="number" value={local.price_min}
-                    onChange={e => setLocal(s => ({ ...s, price_min: e.target.value }))}
-                    placeholder="Min price" className={sel} />
-                <input type="number" value={local.price_max}
-                    onChange={e => setLocal(s => ({ ...s, price_max: e.target.value }))}
-                    placeholder="Max price" className={sel} />
-                <select value={local.sort} onChange={e => setLocal(s => ({ ...s, sort: e.target.value }))} className={sel}>
-                    <option value="newest">Newest first</option>
-                    <option value="price_asc">Price: Low → High</option>
-                    <option value="price_desc">Price: High → Low</option>
-                </select>
-            </div>
-
-            <div className="flex gap-3">
-                <button type="submit"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 text-sm rounded-xl font-semibold text-white shadow-sm transition-all hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}>
-                    <IconSearch className="w-4 h-4" />
-                    Search Properties
-                </button>
-                <button type="button" onClick={reset}
-                    className="px-5 py-3 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors font-medium">
-                    Reset
-                </button>
-            </div>
+            {showMore && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-2.5">
+                    <select value={local.bedrooms} onChange={e => setLocal(s => ({ ...s, bedrooms: e.target.value }))} className={field}>
+                        <option value="">Any bedrooms</option>
+                        {[0, 1, 2, 3, 4, 5, 6].map(n => (
+                            <option key={n} value={n}>{n === 0 ? 'Studio' : `${n} bedroom${n > 1 ? 's' : ''}`}</option>
+                        ))}
+                        <option value="7">7+ bedrooms</option>
+                    </select>
+                    <input type="number" min="0" value={local.price_min}
+                        onChange={e => setLocal(s => ({ ...s, price_min: e.target.value }))}
+                        placeholder="Min price" className={field} />
+                    <input type="number" min="0" value={local.price_max}
+                        onChange={e => setLocal(s => ({ ...s, price_max: e.target.value }))}
+                        placeholder="Max price" className={field} />
+                    <button type="button" onClick={reset}
+                        className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors font-medium">
+                        Reset all
+                    </button>
+                </div>
+            )}
         </form>
     );
 }
@@ -218,6 +216,55 @@ function FeatureCard({ icon, title, body }) {
             </div>
             <h3 className="font-semibold text-gray-900 mb-1.5">{title}</h3>
             <p className="text-sm text-gray-500 leading-relaxed">{body}</p>
+        </div>
+    );
+}
+
+// ── Quick filters: one tap, sticky under the header ─────────────────────────
+function QuickFilters({ filters, propertyTypes, companySlug, total }) {
+    function go(overrides) {
+        const params = Object.fromEntries(
+            Object.entries({ ...filters, ...overrides, page: undefined }).filter(([, v]) => v !== '' && v != null)
+        );
+        if (companySlug) params.company = companySlug;
+        router.get('/listings', params, { preserveState: true, preserveScroll: true, replace: true });
+    }
+
+    const purpose = filters.purpose ?? '';
+    const type    = String(filters.type ?? '');
+    const chip = (active) => `shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold border transition-colors ${
+        active ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm' : 'bg-white border-gray-200 text-gray-700 hover:border-emerald-400 hover:text-emerald-700'
+    }`;
+
+    return (
+        <div className="sticky top-16 z-20 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+                <div className="flex bg-gray-100 rounded-full p-1 shrink-0">
+                    {[['', 'All'], ['sale', 'For Sale'], ['rent', 'For Rent']].map(([v, label]) => (
+                        <button key={label} type="button" onClick={() => go({ purpose: v })}
+                            className={`px-3.5 py-1.5 rounded-full text-sm font-semibold transition-colors ${purpose === v ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
+                            {label}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex-1 min-w-0 flex gap-2 overflow-x-auto py-0.5" style={{ scrollbarWidth: 'none', WebkitMaskImage: 'linear-gradient(90deg, #000 92%, transparent)', maskImage: 'linear-gradient(90deg, #000 92%, transparent)' }}>
+                    {propertyTypes.map(t => (
+                        <button key={t.id} type="button" onClick={() => go({ type: type === String(t.id) ? '' : t.id })} className={chip(type === String(t.id))}>
+                            <AppIcon name={t.icon} className="w-4 h-4" />
+                            {t.name}
+                        </button>
+                    ))}
+                </div>
+                <div className="hidden md:flex items-center gap-3 shrink-0">
+                    <span className="text-sm text-gray-500 whitespace-nowrap"><strong className="text-gray-900">{total}</strong> {total === 1 ? 'property' : 'properties'}</span>
+                    <select value={filters.sort ?? 'newest'} onChange={e => go({ sort: e.target.value })}
+                        className="rounded-full border border-gray-200 bg-white pl-3.5 pr-8 py-2 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="newest">Newest</option>
+                        <option value="price_asc">Price: Low → High</option>
+                        <option value="price_desc">Price: High → Low</option>
+                    </select>
+                </div>
+            </div>
         </div>
     );
 }
@@ -237,7 +284,7 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
     return (
         <PublicLayout title={companyName ? `${companyName} — Listings` : 'Properties in Rwanda'} company={company}>
             {/* ── Hero ── */}
-            <section className="relative text-white overflow-hidden" style={{ minHeight: '520px' }}>
+            <section className="relative text-white overflow-hidden">
                 <div className="absolute inset-0"
                     style={{
                         backgroundImage: 'url(/images/kigali-hero.jpg)',
@@ -249,59 +296,40 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                 <div className="absolute inset-0 opacity-[0.07]"
                     style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-                    <div className="text-center mb-10">
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                    <div className="text-center mb-6">
                         {companyName ? (
-                            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-5">
+                            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
                                 <svg className="w-4 h-4 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" /></svg>
                                 Official Listings
                             </div>
                         ) : (
-                            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-5">
+                            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
                                 Homes, apartments, offices &amp; land
                             </div>
                         )}
-                        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg">
+                        <h1 className="text-3xl sm:text-[42px] font-extrabold leading-tight mb-2 drop-shadow-lg">
                             {companyName ? (
-                                <>{companyName}<br /><span className="text-emerald-300">Property Listings</span></>
+                                <>{companyName} <span className="text-emerald-300">Properties</span></>
                             ) : (
-                                <>Find Your Dream<br /><span className="text-emerald-300">Property in Rwanda</span></>
+                                <>Find your next <span className="text-emerald-300">property in Rwanda</span></>
                             )}
                         </h1>
-                        <p className="text-white/80 text-lg max-w-xl mx-auto drop-shadow">
+                        <p className="text-white/80 text-base sm:text-lg max-w-xl mx-auto drop-shadow">
                             {heroSubtitle}
                         </p>
                     </div>
                     <div className="max-w-5xl mx-auto">
                         <SearchBar filters={filters} propertyTypes={propertyTypes} companySlug={companySlug} />
                     </div>
-                    <div className="flex flex-wrap justify-center gap-8 mt-10">
-                        {[
-                            {
-                                icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12L11.204 3.045a1.125 1.125 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75" /></svg>,
-                                label: `${total} ${total === 1 ? 'Property' : 'Properties'} Listed`
-                            },
-                            {
-                                icon: <IconPin className="w-5 h-5" />,
-                                label: 'Kigali & Nationwide'
-                            },
-                            {
-                                icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-                                label: 'Direct contact with agents'
-                            },
-                        ].map(s => (
-                            <div key={s.label} className="flex items-center gap-2 text-white/85">
-                                <span className="text-emerald-300">{s.icon}</span>
-                                <span className="text-sm font-semibold drop-shadow">{s.label}</span>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
+            <QuickFilters filters={filters} propertyTypes={propertyTypes} companySlug={companySlug} total={total} />
+
             {/* ── Results ── */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
                     <div>
                         <h2 className="text-lg font-bold text-gray-900">

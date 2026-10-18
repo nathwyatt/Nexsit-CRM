@@ -40,8 +40,8 @@ use App\Http\Controllers\SuperAdmin\DashboardController as SADashboard;
 use App\Http\Controllers\SuperAdmin\CompanyController as SACompany;
 use App\Http\Controllers\SuperAdmin\PlanController as SAPlan;
 
-// Redirect root to dashboard or login
-Route::get('/', fn () => redirect('/dashboard'));
+// Visitors land on the public listings; signed-in staff go to their dashboard
+Route::get('/', fn () => redirect(auth()->check() ? '/dashboard' : '/listings'));
 
 // ── Public listing pages (no auth required) ─────────────────────────────────
 Route::middleware('throttle:60,1')->group(function () {
