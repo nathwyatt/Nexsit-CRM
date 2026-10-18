@@ -64,6 +64,24 @@ class Company extends Model
         return $this->activeSubscription?->plan;
     }
 
+    /**
+     * Contact details safe to show the public (listings, emails, PDFs).
+     * Falls back to the Nexsit brand contact when the agency hasn't set its own.
+     */
+    public static function publicProfile(?object $company): array
+    {
+        $brand = config('nexsit.brand');
+
+        return [
+            'name'     => $company->name ?? $brand['name'],
+            'slug'     => $company->slug ?? null,
+            'phone'    => ($company->phone ?? null) ?: $brand['phone'],
+            'whatsapp' => ($company->phone ?? null) ? preg_replace('/\D+/', '', $company->phone) : $brand['whatsapp'],
+            'email'    => ($company->email ?? null) ?: $brand['email'],
+            'city'     => trim(implode(', ', array_filter([$company->address ?? null, $company->city ?? null]))) ?: $brand['city'],
+        ];
+    }
+
     public function isSubscriptionActive(): bool
     {
         return $this->subscriptions()

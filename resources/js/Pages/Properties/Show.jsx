@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
 import { Link, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import AppIcon from '@/Components/AppIcon';
 import TaskPanel from '@/Components/Task/TaskPanel';
 import ActivityFeed from '@/Components/Task/ActivityFeed';
 import DocumentPanel from '@/Components/Document/DocumentPanel';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const STATUS_COLORS = {
     available:   'bg-green-100 text-green-700',
@@ -188,6 +190,7 @@ function OwnersPanel({ owners, propertyId, contacts }) {
 }
 
 function UnitsPanel({ units, propertyId }) {
+    const currency = useCurrency();
     const [adding, setAdding] = useState(false);
     const [editing, setEditing] = useState(null);
     const { data, setData, post, put, processing, errors, reset } = useForm({
@@ -285,7 +288,7 @@ function UnitsPanel({ units, propertyId }) {
                                 {unit.bedrooms != null && <span>{unit.bedrooms}bd</span>}
                                 {unit.bathrooms != null && <span>{unit.bathrooms}ba</span>}
                                 {unit.area_sqm && <span>{unit.area_sqm} sqm</span>}
-                                {unit.rent_price && <span>AED {Number(unit.rent_price).toLocaleString()}</span>}
+                                {unit.rent_price && <span>{currency} {Number(unit.rent_price).toLocaleString()}{rentSuffix(unit.rent_frequency)}</span>}
                             </div>
                             <button onClick={() => startEdit(unit)} className="text-xs text-indigo-500 hover:text-indigo-700">Edit</button>
                             <button onClick={() => {
@@ -303,6 +306,7 @@ function UnitsPanel({ units, propertyId }) {
 }
 
 export default function PropertyShow({ property, contacts, tasks, activities, taskTypes, agents, subject, documents = [], documentTypes = [] }) {
+    const currency = useCurrency();
     const [tab, setTab] = useState('overview');
 
     const TABS = [
@@ -383,13 +387,13 @@ export default function PropertyShow({ property, contacts, tasks, activities, ta
                         {property.price && (
                             <div>
                                 <p className="text-xs text-gray-400">Sale price</p>
-                                <p className="font-bold text-gray-900">AED {Number(property.price).toLocaleString()}</p>
+                                <p className="font-bold text-gray-900">{currency} {Number(property.price).toLocaleString()}</p>
                             </div>
                         )}
                         {property.rent_price && (
                             <div>
-                                <p className="text-xs text-gray-400">Annual rent</p>
-                                <p className="font-bold text-gray-900">AED {Number(property.rent_price).toLocaleString()}</p>
+                                <p className="text-xs text-gray-400">Rent</p>
+                                <p className="font-bold text-gray-900">{currency} {Number(property.rent_price).toLocaleString()}<span className="text-xs font-normal text-gray-400">{rentSuffix(property.rent_frequency)}</span></p>
                             </div>
                         )}
                         {property.area_sqm && (
@@ -436,7 +440,7 @@ export default function PropertyShow({ property, contacts, tasks, activities, ta
                                 <DetailRow label="Floor" value={property.floor != null ? `${property.floor}${property.total_floors ? ` of ${property.total_floors}` : ''}` : null} />
                                 <DetailRow label="Furnished" value={property.is_furnished === true ? 'Yes' : property.is_furnished === false ? 'No' : null} />
                                 <DetailRow label="Permit No." value={property.permit_number} />
-                                <DetailRow label="Service Charge" value={property.service_charge ? `RWF ${Number(property.service_charge).toLocaleString()}/sqm/yr` : null} />
+                                <DetailRow label="Service Charge" value={property.service_charge ? `${currency} ${Number(property.service_charge).toLocaleString()}/month` : null} />
                                 <DetailRow label="Assigned to" value={property.assigned_to?.name} />
 
                                 {property.amenities?.length > 0 && (
@@ -445,7 +449,7 @@ export default function PropertyShow({ property, contacts, tasks, activities, ta
                                         <div className="flex flex-wrap gap-1.5">
                                             {property.amenities.map((a) => (
                                                 <span key={a.id} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
-                                                    {a.icon && `${a.icon} `}{a.name}
+                                                    <AppIcon name={a.icon} className="w-3.5 h-3.5 inline -mt-0.5 mr-1 text-gray-500" />{a.name}
                                                 </span>
                                             ))}
                                         </div>

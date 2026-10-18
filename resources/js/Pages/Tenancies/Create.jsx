@@ -1,8 +1,10 @@
 import { useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 export default function TenanciesCreate({ properties, contacts, deals }) {
+    const currency = useCurrency();
     const { data, setData, post, processing, errors } = useForm({
         property_id:         '',
         unit_id:             '',
@@ -11,7 +13,7 @@ export default function TenanciesCreate({ properties, contacts, deals }) {
         start_date:          '',
         end_date:            '',
         rent_amount:         '',
-        rent_frequency:      'yearly',
+        rent_frequency:      'monthly',
         deposit_amount:      '',
         auto_renew:          false,
         renewal_notice_days: 90,
@@ -86,7 +88,7 @@ export default function TenanciesCreate({ properties, contacts, deals }) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className={labelCls}>Rent Amount (AED) *</label>
+                            <label className={labelCls}>Rent Amount ({currency}) *</label>
                             <input type="number" step="0.01" value={data.rent_amount}
                                 onChange={e => setData('rent_amount', e.target.value)}
                                 placeholder="e.g. 5000" className={inputCls} />
@@ -104,7 +106,7 @@ export default function TenanciesCreate({ properties, contacts, deals }) {
                     </div>
 
                     <div>
-                        <label className={labelCls}>Deposit Amount (AED)</label>
+                        <label className={labelCls}>Deposit Amount ({currency})</label>
                         <input type="number" step="0.01" value={data.deposit_amount}
                             onChange={e => setData('deposit_amount', e.target.value)}
                             placeholder="Optional" className={inputCls} />

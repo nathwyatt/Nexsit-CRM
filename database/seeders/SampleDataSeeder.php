@@ -69,7 +69,7 @@ class SampleDataSeeder extends Seeder
         $srcReferral = $sources['Referral']     ?? null;
         $srcWalkin   = $sources['Walk-in']      ?? null;
         $srcSocial   = $sources['Social Media'] ?? null;
-        $srcPF       = $sources['Property Finder'] ?? null;
+        $srcPF       = $sources['WhatsApp'] ?? null;
         $srcCold     = $sources['Cold Call']    ?? null;
 
         // ── Property Types (query existing) ─────────────────────────────────

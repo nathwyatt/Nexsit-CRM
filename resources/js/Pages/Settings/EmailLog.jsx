@@ -39,7 +39,7 @@ MAIL_PORT=587
 MAIL_USERNAME=your@email.com
 MAIL_PASSWORD=your-app-password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=info@nexsit.rw
+MAIL_FROM_ADDRESS=noreply@yourdomain.com
 MAIL_FROM_NAME="Nexsit Properties"`}
                         </pre>
                         <p className="text-xs text-amber-600 mt-2">

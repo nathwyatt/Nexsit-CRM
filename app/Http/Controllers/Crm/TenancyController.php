@@ -190,7 +190,7 @@ class TenancyController extends Controller
             $tenancy->update(['status' => 'active']);
         }
 
-        ActivityLogger::log('payment_recorded', "Payment of AED " . number_format($data['amount'], 2) . " recorded", $tenancy);
+        ActivityLogger::log('payment_recorded', "Payment of " . config('nexsit.default_currency', 'RWF') . " " . number_format($data['amount'], 0) . " recorded", $tenancy);
 
         return back()->with('success', 'Payment recorded.');
     }

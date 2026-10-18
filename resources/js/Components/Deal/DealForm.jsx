@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const Field = ({ label, error, children }) => (
     <div>
@@ -25,6 +26,7 @@ const Select = ({ children, ...props }) => (
 );
 
 export default function DealForm({ data, setData, errors, pipelines, contacts, properties, agents }) {
+    const currency = useCurrency();
     const [stages, setStages] = useState([]);
 
     useEffect(() => {
@@ -96,7 +98,7 @@ export default function DealForm({ data, setData, errors, pipelines, contacts, p
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Deal value (AED)" error={errors.value}>
+                <Field label={`Deal value (${currency})`} error={errors.value}>
                     <Input
                         type="number" min="0" step="0.01"
                         value={data.value ?? ''}

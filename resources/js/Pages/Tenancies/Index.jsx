@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const STATUS_COLORS = {
     pending:    'bg-amber-100 text-amber-700',
@@ -12,6 +13,7 @@ const STATUS_COLORS = {
 const FREQ_LABELS = { monthly: '/mo', quarterly: '/qtr', yearly: '/yr' };
 
 function TenancyRow({ t }) {
+    const currency = useCurrency();
     const isExpiringSoon = t.status === 'active' &&
         new Date(t.end_date) <= new Date(Date.now() + 90 * 86400000);
 
@@ -51,7 +53,7 @@ function TenancyRow({ t }) {
                 )}
             </td>
             <td className="py-3 px-4 text-sm font-semibold text-gray-900">
-                AED {Number(t.rent_amount).toLocaleString()}
+                {currency} {Number(t.rent_amount).toLocaleString()}
                 <span className="text-xs font-normal text-gray-400 ml-0.5">{FREQ_LABELS[t.rent_frequency]}</span>
             </td>
             <td className="py-3 px-4">

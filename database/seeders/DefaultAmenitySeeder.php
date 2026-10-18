@@ -30,7 +30,7 @@ class DefaultAmenitySeeder extends Seeder
             ['name' => 'Built-in Wardrobes',   'category' => 'unit',     'icon' => 'box'],
             ['name' => 'Central A/C',          'category' => 'unit',     'icon' => 'wind'],
             ['name' => 'Balcony',              'category' => 'unit',     'icon' => 'sunset'],
-            ['name' => "Maid's Room",          'category' => 'unit',     'icon' => 'bed-single'],
+            ['name' => 'Staff Quarters',       'category' => 'unit',     'icon' => 'bed-single'],
             ['name' => 'Study Room',           'category' => 'unit',     'icon' => 'book-open'],
             // community
             ['name' => 'Kids Play Area',       'category' => 'community', 'icon' => 'smile'],

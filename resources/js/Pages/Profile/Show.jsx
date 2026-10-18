@@ -84,7 +84,7 @@ export default function ProfileShow({ user }) {
                         <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
                             <input value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))}
-                                placeholder="+250 78 000 0000" className={inp} />
+                                placeholder="07XX XXX XXX" className={inp} />
                         </div>
                         <div className="pt-1">
                             <button type="submit"

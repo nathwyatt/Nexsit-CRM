@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 const ID_TYPES = [
     { value: 'passport',    label: 'Passport' },
-    { value: 'emirates_id', label: 'Emirates ID' },
     { value: 'national_id', label: 'National ID' },
     { value: 'other',       label: 'Other' },
 ];
@@ -54,20 +53,20 @@ export default function ContactForm({ data, setData, errors, agents }) {
             {/* Name */}
             <div className="grid grid-cols-2 gap-4">
                 <Field label="First name *" error={errors.first_name}>
-                    <Input value={data.first_name} onChange={(e) => setData('first_name', e.target.value)} placeholder="Ahmed" />
+                    <Input value={data.first_name} onChange={(e) => setData('first_name', e.target.value)} placeholder="Jean" />
                 </Field>
                 <Field label="Last name *" error={errors.last_name}>
-                    <Input value={data.last_name} onChange={(e) => setData('last_name', e.target.value)} placeholder="Al Mansouri" />
+                    <Input value={data.last_name} onChange={(e) => setData('last_name', e.target.value)} placeholder="Uwimana" />
                 </Field>
             </div>
 
             {/* Contact details */}
             <div className="grid grid-cols-2 gap-4">
                 <Field label="Email" error={errors.email}>
-                    <Input type="email" value={data.email ?? ''} onChange={(e) => setData('email', e.target.value || null)} placeholder="ahmed@example.com" />
+                    <Input type="email" value={data.email ?? ''} onChange={(e) => setData('email', e.target.value || null)} placeholder="name@example.com" />
                 </Field>
                 <Field label="Phone" error={errors.phone}>
-                    <Input value={data.phone ?? ''} onChange={(e) => setData('phone', e.target.value || null)} placeholder="+250 50 123 4567" />
+                    <Input value={data.phone ?? ''} onChange={(e) => setData('phone', e.target.value || null)} placeholder="07XX XXX XXX" />
                 </Field>
             </div>
 
@@ -76,7 +75,7 @@ export default function ContactForm({ data, setData, errors, agents }) {
                     <Input value={data.phone_2 ?? ''} onChange={(e) => setData('phone_2', e.target.value || null)} />
                 </Field>
                 <Field label="Nationality" error={errors.nationality}>
-                    <Input value={data.nationality ?? ''} onChange={(e) => setData('nationality', e.target.value || null)} placeholder="UAE" />
+                    <Input value={data.nationality ?? ''} onChange={(e) => setData('nationality', e.target.value || null)} placeholder="Rwandan" />
                 </Field>
             </div>
 

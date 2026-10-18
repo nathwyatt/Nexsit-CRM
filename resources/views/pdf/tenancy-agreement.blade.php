@@ -1,3 +1,4 @@
+@php $agency = \App\Models\Company::publicProfile(auth()->user()?->company); @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +50,7 @@
     {{-- Header --}}
     <div class="header">
         <div style="display:table-cell;vertical-align:middle;">
-            <div class="brand-name">Nexsit Properties</div>
+            <div class="brand-name">{{ $agency['name'] }}</div>
             <div class="brand-sub">Kigali, Rwanda</div>
         </div>
         <div class="doc-title">Tenancy Agreement<br><span style="font-size:11px;font-weight:400;color:#6b7280;">{{ $tenancy->reference }}</span></div>
@@ -61,9 +62,9 @@
             <h2>Landlord / Owner</h2>
             @php $owner = $tenancy->property?->owners?->first()?->contact; @endphp
             <table class="detail-table">
-                <tr><td>Name</td><td>{{ $owner?->name ?? 'Nexsit Properties Ltd.' }}</td></tr>
-                <tr><td>Phone</td><td>{{ $owner?->phone ?? '+250 78 000 0000' }}</td></tr>
-                <tr><td>Email</td><td>{{ $owner?->email ?? 'info@nexsit.rw' }}</td></tr>
+                <tr><td>Name</td><td>{{ $owner?->name ?? $agency['name'] }}</td></tr>
+                <tr><td>Phone</td><td>{{ $owner?->phone ?? $agency['phone'] }}</td></tr>
+                <tr><td>Email</td><td>{{ $owner?->email ?? $agency['email'] }}</td></tr>
             </table>
         </div>
         <div class="col">
@@ -152,7 +153,7 @@
     <div class="sig-area">
         <div class="sig-block">
             <p style="font-size:10.5px;font-weight:700;margin-bottom:4px;">Landlord / Authorised Agent</p>
-            <p style="font-size:10px;color:#374151;">{{ $owner?->name ?? 'Nexsit Properties Ltd.' }}</p>
+            <p style="font-size:10px;color:#374151;">{{ $owner?->name ?? $agency['name'] }}</p>
             <div class="sig-line">Signature &amp; Date</div>
         </div>
         <div class="sig-block">
@@ -163,7 +164,7 @@
     </div>
 
     <div class="footer">
-        Nexsit Properties · Kigali, Rwanda · info@nexsit.rw · +250 78 000 0000 · Generated {{ now()->format('d M Y H:i') }}
+        {{ $agency['name'] }} · {{ $agency['city'] }} · {{ $agency['email'] }} · {{ $agency['phone'] }} · Generated {{ now()->format('d M Y H:i') }}
     </div>
 
 </div>

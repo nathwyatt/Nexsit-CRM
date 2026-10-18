@@ -1,3 +1,4 @@
+@php $agency = \App\Models\Company::publicProfile(auth()->user()?->company); @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +43,7 @@
     {{-- Header --}}
     <div class="header">
         <div class="header-left">
-            <div class="brand-name">Nexsit Properties</div>
+            <div class="brand-name">{{ $agency['name'] }}</div>
             <div class="brand-sub">Official Payment Receipt</div>
         </div>
         <div class="header-right">
@@ -112,7 +113,7 @@
     <div class="footer">
         <div class="footer-thanks">Thank you for your payment!</div>
         <div class="footer-contact">
-            Nexsit Properties · Kigali, Rwanda · +250 78 000 0000 · info@nexsit.rw
+            {{ $agency['name'] }} · {{ $agency['city'] }} · {{ $agency['phone'] }} · {{ $agency['email'] }}
         </div>
         <div class="footer-note">
             This is an official payment receipt. Please retain this document for your records.<br>

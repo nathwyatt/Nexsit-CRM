@@ -1,6 +1,7 @@
 import { router, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
+import AppIcon from '@/Components/AppIcon';
 
 const STATUS_COLORS = {
     available:   'bg-emerald-50 text-emerald-700 ring-emerald-200',
@@ -37,7 +38,7 @@ function PropertyCard({ property }) {
                 {/* Overlay badges */}
                 <div className="absolute top-2 left-2 flex gap-1.5">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ring-1 ${STATUS_COLORS[property.status] ?? 'bg-gray-100 text-gray-600 ring-gray-200'}`}>
-                        {property.status.replace('_', ' ')}
+                        {property.status.charAt(0).toUpperCase() + property.status.slice(1).replace('_', ' ')}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 font-medium shadow-sm">
                         {PURPOSE_LABELS[property.purpose] ?? property.purpose}
@@ -55,7 +56,17 @@ function PropertyCard({ property }) {
 
             {/* Info */}
             <div className="p-4">
-                <p className="text-xs text-gray-400 font-mono mb-1">{property.reference}</p>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                    {property.property_type ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                            <AppIcon name={property.property_type.icon} className="w-3.5 h-3.5" />
+                            {property.property_type.name}
+                        </span>
+                    ) : (
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-300">No type</span>
+                    )}
+                    <span className="text-xs text-gray-400 font-mono">{property.reference}</span>
+                </div>
                 <Link href={`/properties/${property.id}`}
                     className="text-sm font-bold text-gray-900 hover:text-emerald-600 line-clamp-2 leading-snug transition-colors">
                     {property.title}

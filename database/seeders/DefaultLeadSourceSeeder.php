@@ -18,9 +18,9 @@ class DefaultLeadSourceSeeder extends Seeder
         $companyId = $this->companyId();
 
         $sources = [
-            ['name' => 'Property Finder', 'icon' => 'building-2'],
-            ['name' => 'Bayut',            'icon' => 'home'],
-            ['name' => 'Dubizzle',         'icon' => 'tag'],
+            ['name' => 'WhatsApp',         'icon' => 'message-circle'],
+            ['name' => 'Jiji',             'icon' => 'tag'],
+            ['name' => 'Signboard',        'icon' => 'signpost'],
             ['name' => 'Walk-in',          'icon' => 'footprints'],
             ['name' => 'Referral',         'icon' => 'users'],
             ['name' => 'Website',          'icon' => 'globe'],

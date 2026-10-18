@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
-
-function fmtRwf(n) {
-    return `RWF ${Number(n ?? 0).toLocaleString()}`;
-}
+import { formatMoney, rentSuffix, useCurrency } from '@/Utils/format';
 
 const STATUS_COLORS = {
     available:   'bg-emerald-500',
@@ -44,9 +41,11 @@ function IconStar({ className = 'w-3 h-3' }) {
 
 // ── Property Card ─────────────────────────────────────────────────────────────
 function PropertyCard({ property, companySlug }) {
+    const currency   = useCurrency();
+    const [imgFailed, setImgFailed] = useState(false);
     const isRent     = property.purpose === 'rent';
     const price      = isRent ? property.rent_price : property.price;
-    const priceLabel = price ? `${fmtRwf(price)}${isRent ? '/yr' : ''}` : 'Price on request';
+    const priceLabel = price ? `${formatMoney(price, currency)}${isRent ? rentSuffix(property.rent_frequency) : ''}` : 'Price on request';
     const href       = companySlug
         ? `/listings/${property.reference}?company=${companySlug}`
         : `/listings/${property.reference}`;
@@ -56,13 +55,13 @@ function PropertyCard({ property, companySlug }) {
             className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-100 hover:border-emerald-200 transition-all duration-300 flex flex-col">
             {/* Image */}
             <div className="relative overflow-hidden bg-gray-100" style={{ aspectRatio: '4/3' }}>
-                {property.photo_thumb ? (
-                    <img src={property.photo_thumb} alt={property.title}
+                {property.photo_thumb && !imgFailed ? (
+                    <img src={property.photo_thumb} alt="" loading="lazy" onError={() => setImgFailed(true)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-gray-200">
                         <IconHome className="w-12 h-12" />
-                        <span className="text-xs mt-2 text-gray-300">No photo yet</span>
+                        <span className="text-xs mt-2 text-gray-400">Photos coming soon</span>
                     </div>
                 )}
                 <div className="absolute top-3 left-3 flex gap-1.5">
@@ -183,10 +182,10 @@ function SearchBar({ filters, propertyTypes, companySlug }) {
                 </select>
                 <input type="number" value={local.price_min}
                     onChange={e => setLocal(s => ({ ...s, price_min: e.target.value }))}
-                    placeholder="Min price (RWF)" className={sel} />
+                    placeholder="Min price" className={sel} />
                 <input type="number" value={local.price_max}
                     onChange={e => setLocal(s => ({ ...s, price_max: e.target.value }))}
-                    placeholder="Max price (RWF)" className={sel} />
+                    placeholder="Max price" className={sel} />
                 <select value={local.sort} onChange={e => setLocal(s => ({ ...s, sort: e.target.value }))} className={sel}>
                     <option value="newest">Newest first</option>
                     <option value="price_asc">Price: Low → High</option>
@@ -225,7 +224,8 @@ function FeatureCard({ icon, title, body }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function ListingsIndex({ properties, propertyTypes, filters, company }) {
-    const { data, meta, links } = properties;
+    const { data, links } = properties;
+    const total = properties.total ?? properties.meta?.total ?? 0;
     const hasFilters    = Object.values(filters).some(v => v && v !== 'newest' && v !== 'company');
     const companySlug   = company?.slug ?? filters.company ?? null;
     const companyName   = company?.name ?? null;
@@ -259,7 +259,7 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                         ) : (
                             <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold mb-5">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                                Rwanda's Premier Property Platform
+                                Homes, apartments, offices &amp; land
                             </div>
                         )}
                         <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg">
@@ -280,7 +280,7 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                         {[
                             {
                                 icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12L11.204 3.045a1.125 1.125 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75" /></svg>,
-                                label: `${meta?.total ?? 0} Properties Listed`
+                                label: `${total} ${total === 1 ? 'Property' : 'Properties'} Listed`
                             },
                             {
                                 icon: <IconPin className="w-5 h-5" />,
@@ -288,7 +288,7 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                             },
                             {
                                 icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-                                label: 'Verified Listings'
+                                label: 'Direct contact with agents'
                             },
                         ].map(s => (
                             <div key={s.label} className="flex items-center gap-2 text-white/85">
@@ -308,7 +308,7 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                             {hasFilters ? 'Search Results' : companyName ? `${companyName} Properties` : 'All Properties'}
                         </h2>
                         <p className="text-sm text-gray-400 mt-0.5">
-                            {meta?.total ?? 0} {(meta?.total ?? 0) === 1 ? 'property' : 'properties'} found
+                            {total} {total === 1 ? 'property' : 'properties'} found
                         </p>
                     </div>
                     {hasFilters && (
@@ -368,25 +368,25 @@ export default function ListingsIndex({ properties, propertyTypes, filters, comp
                     <div className="max-w-7xl mx-auto px-4 sm:px-6">
                         <div className="text-center mb-10">
                             <h2 className="text-2xl font-bold text-gray-900">
-                                {companyName ? `Why Choose ${companyName}?` : 'Why Choose Nexsit Properties?'}
+                                {companyName ? `Why choose ${companyName}?` : 'Property search made simple'}
                             </h2>
-                            <p className="text-gray-500 mt-2 text-sm">Rwanda's most trusted real estate platform</p>
+                            <p className="text-gray-500 mt-2 text-sm">Browse, compare and enquire in a few clicks</p>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <FeatureCard
                                 icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>}
-                                title="Verified Listings"
-                                body="Every property is verified by our local team before being published."
+                                title="Listed by real agencies"
+                                body="Properties are published directly by the agencies that manage them."
                             />
                             <FeatureCard
                                 icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>}
-                                title="Fast Response"
-                                body="Our agents respond to your enquiry within hours, not days."
+                                title="Quick replies"
+                                body="Send an enquiry or WhatsApp message and the agent contacts you directly."
                             />
                             <FeatureCard
                                 icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>}
-                                title="Secure Transactions"
-                                body="Your personal information is always kept safe and confidential."
+                                title="Your details stay private"
+                                body="Your information is only shared with the agency you contact."
                             />
                         </div>
                     </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import DocumentPanel from '@/Components/Document/DocumentPanel';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const STATUS_COLORS = {
     pending:    'bg-amber-100 text-amber-700',
@@ -32,6 +33,7 @@ function InfoRow({ label, value }) {
 }
 
 function RecordPaymentModal({ payment, tenancyId, onClose }) {
+    const currency = useCurrency();
     const { data, setData, post, processing, errors } = useForm({
         paid_date:      new Date().toISOString().split('T')[0],
         payment_method: 'bank_transfer',
@@ -60,7 +62,7 @@ function RecordPaymentModal({ payment, tenancyId, onClose }) {
 
                 <form onSubmit={submit} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Amount (AED) *</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Amount ({currency}) *</label>
                         <input type="number" step="0.01" value={data.amount}
                             onChange={e => setData('amount', e.target.value)} className={inputCls} />
                         {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount}</p>}
@@ -158,6 +160,7 @@ function TerminateModal({ tenancyId, onClose }) {
 }
 
 export default function TenanciesShow({ tenancy, payments, documents = [], documentTypes = [] }) {
+    const currency = useCurrency();
     const [recordingPayment, setRecordingPayment] = useState(null);
     const [showTerminate, setShowTerminate]       = useState(false);
 
@@ -250,7 +253,7 @@ export default function TenanciesShow({ tenancy, payments, documents = [], docum
                             <InfoRow label="Reference" value={tenancy.reference} />
                             <InfoRow label="Start Date" value={tenancy.start_date} />
                             <InfoRow label="End Date" value={tenancy.end_date} />
-                            <InfoRow label="Rent" value={`RWF ${Number(tenancy.rent_amount).toLocaleString()} ${FREQ_LABELS[tenancy.rent_frequency] ?? ''}`} />
+                            <InfoRow label="Rent" value={`${currency} ${Number(tenancy.rent_amount).toLocaleString()} ${FREQ_LABELS[tenancy.rent_frequency] ?? ''}`} />
                             {tenancy.deposit_amount && (
                                 <InfoRow label="Deposit"
                                     value={`RWF ${Number(tenancy.deposit_amount).toLocaleString()}${tenancy.deposit_returned_at ? ' (returned ' + tenancy.deposit_returned_at + ')' : ''}`} />
@@ -320,7 +323,7 @@ export default function TenanciesShow({ tenancy, payments, documents = [], docum
                             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
                                 <h2 className="text-sm font-semibold text-gray-700 mb-3">Deposit</h2>
                                 <p className="text-sm text-gray-600 mb-3">
-                                    AED {Number(tenancy.deposit_amount).toLocaleString()} — not yet returned
+                                    {currency} {Number(tenancy.deposit_amount).toLocaleString()} — not yet returned
                                 </p>
                                 <button onClick={handleReturnDeposit}
                                     className="w-full py-2 text-sm border border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 font-medium">
@@ -358,7 +361,7 @@ export default function TenanciesShow({ tenancy, payments, documents = [], docum
                                                     )}
                                                 </td>
                                                 <td className="py-3 px-4 text-sm font-semibold text-gray-900">
-                                                    AED {Number(p.amount).toLocaleString()}
+                                                    {currency} {Number(p.amount).toLocaleString()}
                                                 </td>
                                                 <td className="py-3 px-4 text-xs text-gray-500">
                                                     {p.payment_method ? METHOD_LABELS[p.payment_method] : '—'}

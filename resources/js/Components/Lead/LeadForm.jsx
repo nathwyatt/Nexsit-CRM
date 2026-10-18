@@ -1,3 +1,4 @@
+import { useCurrency, rentSuffix } from '@/Utils/format';
 function Field({ label, error, children }) {
     return (
         <div>
@@ -21,6 +22,7 @@ function Select({ children, ...props }) {
 }
 
 export default function LeadForm({ data, setData, errors, sources, agents, properties, contacts = [] }) {
+    const currency = useCurrency();
     return (
         <div className="space-y-5">
             {/* Source */}
@@ -63,11 +65,11 @@ export default function LeadForm({ data, setData, errors, sources, agents, prope
 
             {/* Budget */}
             <div className="grid grid-cols-2 gap-4">
-                <Field label="Budget min (AED)" error={errors.budget_min}>
+                <Field label={`Budget min (${currency})`} error={errors.budget_min}>
                     <Input type="number" min="0" value={data.budget_min ?? ''}
                         onChange={(e) => setData('budget_min', e.target.value || null)} placeholder="0" />
                 </Field>
-                <Field label="Budget max (AED)" error={errors.budget_max}>
+                <Field label={`Budget max (${currency})`} error={errors.budget_max}>
                     <Input type="number" min="0" value={data.budget_max ?? ''}
                         onChange={(e) => setData('budget_max', e.target.value || null)} placeholder="0" />
                 </Field>

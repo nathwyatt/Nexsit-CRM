@@ -50,7 +50,7 @@ function InviteForm({ onDone }) {
                 <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
                     <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                        placeholder="+250 78 000 0000" className={inp} />
+                        placeholder="07XX XXX XXX" className={inp} />
                 </div>
             </div>
             <div className="flex gap-3">
@@ -113,7 +113,7 @@ function EditModal({ user, onClose }) {
                     <div>
                         <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
                         <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                            placeholder="+250 78 000 0000" className={inp} />
+                            placeholder="07XX XXX XXX" className={inp} />
                     </div>
                     <div className="flex gap-3 pt-2">
                         <button type="submit"

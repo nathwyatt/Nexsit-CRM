@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import SortableList from '@/Components/SortableList';
+import AppIcon, { IconPicker } from '@/Components/AppIcon';
 
 function SourceRow({ source, onEdit, onDelete }) {
     return (
         <div className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-4 py-3">
-            {source.icon && <span className="text-lg w-6 text-center">{source.icon}</span>}
+            {source.icon && <span className="w-6 flex justify-center text-gray-500"><AppIcon name={source.icon} className="w-5 h-5" /></span>}
             <span className="flex-1 text-sm font-medium text-gray-800">{source.name}</span>
             <span className={`text-xs px-2 py-0.5 rounded-full ${source.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                 {source.is_active ? 'Active' : 'Inactive'}
@@ -42,10 +43,8 @@ function SourceForm({ source, onDone }) {
                     {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Icon (emoji)</label>
-                    <input value={data.icon} onChange={(e) => setData('icon', e.target.value)}
-                        placeholder="🏠"
-                        className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Icon</label>
+                    <IconPicker value={data.icon} onChange={(v) => setData('icon', v)} />
                 </div>
             </div>
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">

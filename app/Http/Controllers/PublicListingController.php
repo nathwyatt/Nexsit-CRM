@@ -91,7 +91,7 @@ class PublicListingController extends Controller
                 ->orderBy('position')
                 ->get(['id', 'name', 'slug', 'icon']),
             'filters'  => $request->only(['q', 'purpose', 'type', 'bedrooms', 'price_min', 'price_max', 'sort', 'company']),
-            'company'  => $company ? ['name' => $company->name, 'slug' => $company->slug] : null,
+            'company'  => $company ? \App\Models\Company::publicProfile($company) : null,
         ]);
     }
 
@@ -112,7 +112,10 @@ class PublicListingController extends Controller
             'url' => $m->getUrl(),
         ]);
 
+        $company = DB::table('companies')->where('id', $property->company_id)->first();
+
         return Inertia::render('Listings/Show', [
+            'company'  => \App\Models\Company::publicProfile($company),
             'property' => [
                 'id'              => $property->id,
                 'reference'       => $property->reference,

@@ -1,3 +1,4 @@
+import AppIcon from '@/Components/AppIcon';
 const CATEGORY_LABELS = {
     building:  'Building',
     unit:      'Unit',
@@ -46,7 +47,7 @@ export default function AmenityPicker({ amenities, selected, onChange }) {
                                         onChange={() => toggle(amenity.id)}
                                     />
                                     {amenity.icon && (
-                                        <span className="text-base">{amenity.icon}</span>
+                                        <span className="text-gray-500"><AppIcon name={amenity.icon} className="w-4 h-4" /></span>
                                     )}
                                     <span className="truncate">{amenity.name}</span>
                                 </label>

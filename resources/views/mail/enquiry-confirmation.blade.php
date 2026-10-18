@@ -23,10 +23,10 @@ View Property Online
 
 If you have any urgent questions, please contact us:
 
-📞 +250 78 000 0000
-✉ info@nexsit.rw
-📍 Kigali, Rwanda
+📞 {{ $agency['phone'] }}
+✉ {{ $agency['email'] }}
+📍 {{ $agency['city'] }}
 
 Thanks,<br>
-**Nexsit Properties**
+**{{ $agency['name'] }}**
 @endcomponent

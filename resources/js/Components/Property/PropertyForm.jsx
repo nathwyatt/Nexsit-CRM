@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AmenityPicker from './AmenityPicker';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const PURPOSES = [
     { value: 'sale', label: 'For Sale' },
@@ -52,6 +53,7 @@ function Select({ children, ...props }) {
 }
 
 export default function PropertyForm({ data, setData, errors, propertyTypes, amenities, agents }) {
+    const currency = useCurrency();
     const [tab, setTab] = useState('Details');
 
     return (
@@ -73,7 +75,7 @@ export default function PropertyForm({ data, setData, errors, propertyTypes, ame
                 <div className="space-y-4">
                     <Field label="Title *" error={errors.title}>
                         <Input value={data.title} onChange={(e) => setData('title', e.target.value)}
-                            placeholder="e.g. Spacious 2BR in Downtown Dubai" />
+                            placeholder="e.g. Spacious 3-bedroom house in Kibagabaga" />
                     </Field>
 
                     <div className="grid grid-cols-3 gap-4">
@@ -156,34 +158,34 @@ export default function PropertyForm({ data, setData, errors, propertyTypes, ame
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="Building" error={errors.building}>
                             <Input value={data.building ?? ''} onChange={(e) => setData('building', e.target.value || null)}
-                                placeholder="e.g. Marina Heights Tower" />
+                                placeholder="e.g. Kigali Heights" />
                         </Field>
                         <Field label="Community / Area" error={errors.community}>
                             <Input value={data.community ?? ''} onChange={(e) => setData('community', e.target.value || null)}
-                                placeholder="e.g. Dubai Marina" />
+                                placeholder="e.g. Kimihurura" />
                         </Field>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="City *" error={errors.city}>
                             <Input value={data.city} onChange={(e) => setData('city', e.target.value)}
-                                placeholder="Dubai" />
+                                placeholder="Kigali" />
                         </Field>
                         <Field label="Country" error={errors.country}>
-                            <Input value={data.country ?? 'AE'} maxLength={2}
+                            <Input value={data.country ?? 'RW'} maxLength={2}
                                 onChange={(e) => setData('country', e.target.value.toUpperCase())}
-                                placeholder="AE" />
+                                placeholder="RW" />
                         </Field>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="Latitude" error={errors.latitude}>
                             <Input type="number" step="any" value={data.latitude ?? ''}
                                 onChange={(e) => setData('latitude', e.target.value || null)}
-                                placeholder="25.2048" />
+                                placeholder="-1.9441" />
                         </Field>
                         <Field label="Longitude" error={errors.longitude}>
                             <Input type="number" step="any" value={data.longitude ?? ''}
                                 onChange={(e) => setData('longitude', e.target.value || null)}
-                                placeholder="55.2708" />
+                                placeholder="30.0619" />
                         </Field>
                     </div>
                 </div>
@@ -193,12 +195,12 @@ export default function PropertyForm({ data, setData, errors, propertyTypes, ame
             {tab === 'Pricing' && (
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="Sale Price (AED)" error={errors.price}>
+                        <Field label={`Sale Price (${currency})`} error={errors.price}>
                             <Input type="number" min="0" step="1000" value={data.price ?? ''}
                                 onChange={(e) => setData('price', e.target.value || null)}
                                 placeholder="0" />
                         </Field>
-                        <Field label="Annual Rent (AED)" error={errors.rent_price}>
+                        <Field label={`Rent Price (${currency})`} error={errors.rent_price}>
                             <Input type="number" min="0" step="1000" value={data.rent_price ?? ''}
                                 onChange={(e) => setData('rent_price', e.target.value || null)}
                                 placeholder="0" />
@@ -212,7 +214,7 @@ export default function PropertyForm({ data, setData, errors, propertyTypes, ame
                                 {RENT_FREQS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
                             </Select>
                         </Field>
-                        <Field label="Service Charge (AED/sqm/yr)" error={errors.service_charge}>
+                        <Field label={`Service Charge (${currency} per month)`} error={errors.service_charge}>
                             <Input type="number" min="0" step="0.01" value={data.service_charge ?? ''}
                                 onChange={(e) => setData('service_charge', e.target.value || null)}
                                 placeholder="0.00" />

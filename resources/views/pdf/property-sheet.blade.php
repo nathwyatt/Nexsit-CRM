@@ -1,3 +1,4 @@
+@php $agency = \App\Models\Company::publicProfile(auth()->user()?->company); @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,8 +69,8 @@
     <div class="header">
         <div class="header-inner">
             <div class="header-logo">
-                <div class="brand-name">Nexsit Properties</div>
-                <div class="brand-sub">Kigali, Rwanda · info@nexsit.rw · +250 78 000 0000</div>
+                <div class="brand-name">{{ $agency['name'] }}</div>
+                <div class="brand-sub">{{ $agency['city'] }} · {{ $agency['email'] }} · {{ $agency['phone'] }}</div>
             </div>
             <div class="header-ref">
                 <div class="ref-badge">{{ $property->reference }}</div>
@@ -169,12 +170,12 @@
     <div class="footer">
         <div class="footer-left">
             <div class="footer-item">📍 Kigali, Rwanda</div>
-            <div class="footer-item">📞 +250 78 000 0000</div>
-            <div class="footer-item">✉ info@nexsit.rw</div>
+            <div class="footer-item">📞 {{ $agency['phone'] }}</div>
+            <div class="footer-item">✉ {{ $agency['email'] }}</div>
             <div class="footer-disclaimer">This document is for informational purposes only. All information is subject to change without notice.</div>
         </div>
         <div class="footer-right">
-            <div style="font-size:11px;font-weight:700;color:#15803d;">Nexsit Properties</div>
+            <div style="font-size:11px;font-weight:700;color:#15803d;">{{ $agency['name'] }}</div>
             <div class="watermark">Generated {{ now()->format('d M Y H:i') }}</div>
         </div>
     </div>

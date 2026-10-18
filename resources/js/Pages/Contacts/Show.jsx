@@ -5,6 +5,7 @@ import TaskPanel from '@/Components/Task/TaskPanel';
 import ActivityFeed from '@/Components/Task/ActivityFeed';
 import DocumentPanel from '@/Components/Document/DocumentPanel';
 import WhatsappButton from '@/Components/WhatsappButton';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 const ROLE_COLORS = {
     buyer:  'bg-blue-100 text-blue-700',
@@ -85,6 +86,7 @@ function RolesPanel({ contact }) {
 }
 
 export default function ContactShow({ contact, tasks, activities, taskTypes, subject, agents = [], documents = [], documentTypes = [] }) {
+    const currency = useCurrency();
     const [tab, setTab] = useState('overview');
 
     const TABS = [
@@ -259,7 +261,7 @@ export default function ContactShow({ contact, tasks, activities, taskTypes, sub
                                     </span>
                                     {d.value && (
                                         <span className="text-xs font-medium text-gray-700 shrink-0">
-                                            AED {Number(d.value).toLocaleString()}
+                                            {currency} {Number(d.value).toLocaleString()}
                                         </span>
                                     )}
                                 </Link>

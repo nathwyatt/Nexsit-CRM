@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'error'   => fn () => $request->session()->get('error'),
             ],
             'currency'             => config('nexsit.default_currency', 'RWF'),
+            'brand'                => config('nexsit.brand'),
             'notifications_unread' => fn () => $user?->unreadNotifications()->count() ?? 0,
             'whatsapp_templates'   => fn () => $user
                 ? WhatsappTemplate::where('company_id', $user->company_id)

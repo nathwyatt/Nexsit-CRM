@@ -1,7 +1,9 @@
 import { useForm, Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import { useCurrency, rentSuffix } from '@/Utils/format';
 
 export default function TenanciesEdit({ tenancy, properties, contacts, deals }) {
+    const currency = useCurrency();
     const { data, setData, put, processing, errors } = useForm({
         property_id:         tenancy.property_id ?? '',
         unit_id:             tenancy.unit_id ?? '',
@@ -10,7 +12,7 @@ export default function TenanciesEdit({ tenancy, properties, contacts, deals }) 
         start_date:          tenancy.start_date ?? '',
         end_date:            tenancy.end_date ?? '',
         rent_amount:         tenancy.rent_amount ?? '',
-        rent_frequency:      tenancy.rent_frequency ?? 'yearly',
+        rent_frequency:      tenancy.rent_frequency ?? 'monthly',
         deposit_amount:      tenancy.deposit_amount ?? '',
         auto_renew:          tenancy.auto_renew ?? false,
         renewal_notice_days: tenancy.renewal_notice_days ?? 90,
@@ -100,7 +102,7 @@ export default function TenanciesEdit({ tenancy, properties, contacts, deals }) 
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className={labelCls}>Rent Amount (AED) *</label>
+                            <label className={labelCls}>Rent Amount ({currency}) *</label>
                             <input type="number" step="0.01" value={data.rent_amount}
                                 onChange={e => setData('rent_amount', e.target.value)} className={inputCls} />
                             {errors.rent_amount && <p className="text-xs text-red-500 mt-1">{errors.rent_amount}</p>}
@@ -117,7 +119,7 @@ export default function TenanciesEdit({ tenancy, properties, contacts, deals }) 
                     </div>
 
                     <div>
-                        <label className={labelCls}>Deposit Amount (AED)</label>
+                        <label className={labelCls}>Deposit Amount ({currency})</label>
                         <input type="number" step="0.01" value={data.deposit_amount}
                             onChange={e => setData('deposit_amount', e.target.value)}
                             placeholder="Optional" className={inputCls} />
